@@ -1,0 +1,79 @@
+[
+    {
+        "id": "c6930826586589",
+        "name": "KAHVELER",
+        "image": "uploads\/u_6930853ba056f6.18886522.png",
+        "visible": true,
+        "layout": "vertical"
+    },
+    {
+        "id": "c6930827426d61",
+        "name": "SMOOTİE",
+        "image": "uploads\/u_693085823ba134.05189484.png",
+        "visible": true,
+        "layout": "vertical"
+    },
+    {
+        "id": "c6930827845a58",
+        "name": "FROZEN",
+        "image": "",
+        "visible": true,
+        "layout": "two"
+    },
+    {
+        "id": "c6930827dc6dd2",
+        "name": "LİMONATA",
+        "image": "",
+        "visible": true,
+        "layout": "two"
+    },
+    {
+        "id": "c693082835229f",
+        "name": "NOA SARMA",
+        "image": "",
+        "visible": true,
+        "layout": "two"
+    },
+    {
+        "id": "c69308288ab489",
+        "name": "DONDURMA",
+        "image": "",
+        "visible": true,
+        "layout": "two"
+    },
+    {
+        "id": "c6930828f3712f",
+        "name": "KRUVASAN",
+        "image": "",
+        "visible": true,
+        "layout": "two"
+    },
+    {
+        "id": "c693082a05d328",
+        "name": "TATLILAR",
+        "image": "",
+        "visible": true,
+        "layout": "two"
+    },
+    {
+        "id": "c693082a8d8dc0",
+        "name": "SOĞUK KAHVELER",
+        "image": "",
+        "visible": true,
+        "layout": "two"
+    },
+    {
+        "id": "c693082aeb380c",
+        "name": "SICAK İÇECEKLER",
+        "image": "",
+        "visible": true,
+        "layout": "two"
+    },
+    {
+        "id": "c693082b4b2d2d",
+        "name": "WAFFLE",
+        "image": "",
+        "visible": true,
+        "layout": "two"
+    }
+]

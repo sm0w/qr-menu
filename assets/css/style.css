@@ -1,0 +1,54 @@
+:root{--bg:#f7f7f7;--text:#111;--muted:#666;--card:#fff;--accent:#111}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+.site-header{position:sticky;top:0;z-index:10;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:10px;border-bottom:1px solid #eee}
+.site-header.overlay{background:rgba(255,255,255,.85)}
+.header-left,.header-right{width:64px;display:flex;align-items:center;justify-content:center}
+.header-center{flex:1;display:flex;align-items:center;justify-content:center}
+.logo{height:36px}
+.logo-text{font-weight:700;font-size:18px}
+.icon-btn{background:none;border:none;padding:8px;cursor:pointer}
+.search-bar{display:none;position:sticky;top:54px;background:#fff;padding:8px;border-bottom:1px solid #eee}
+.search-bar.active{display:block}
+.search-bar input{width:100%;padding:10px;border:1px solid #ddd;border-radius:8px}
+.search-results{display:none;position:relative;background:#fff;border:1px solid #eee;border-radius:8px;margin-top:8px;box-shadow:0 6px 20px rgba(0,0,0,.08)}
+.sr-group{font-weight:600;padding:8px 10px;border-bottom:1px solid #f0f0f0}
+.sr-item{display:block;padding:10px;text-decoration:none;color:#111;border-bottom:1px solid #f6f6f6}
+.sr-item:hover{background:#f9f9f9}
+.sr-empty{padding:10px;color:#666}
+.container{padding:12px}
+.favorites h2,.categories h2{font-size:16px;margin:12px 0}
+.fav-list{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px}
+.fav-card{min-width:220px;background:var(--card);border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.06);text-decoration:none;color:inherit;display:flex}
+.fav-img{width:80px;height:80px;border-radius:12px 0 0 12px;background-size:cover;background-position:center;background-color:#ddd}
+.fav-info{padding:8px;display:flex;flex-direction:column;justify-content:center}
+.fav-name{font-weight:600}
+.fav-price{color:var(--muted);font-size:13px}
+.cat-header{display:flex;align-items:center;justify-content:space-between}
+.cat-grid{display:grid;gap:10px;grid-template-columns:1fr 1fr}
+.cat-card.full{grid-column:1 / -1}
+.cat-card.vertical{height:220px}
+.cat-card{position:relative;height:140px;border-radius:12px;background-size:cover;background-position:center;background-color:#eaeaea;text-decoration:none;color:#fff;display:flex;align-items:flex-end}
+.cat-title{width:100%;padding:10px;background:linear-gradient(180deg,rgba(0,0,0,0) 0%, rgba(0,0,0,.6) 100%);border-radius:0 0 12px 12px}
+.site-footer{display:flex;align-items:center;justify-content:space-between;padding:16px;background:#fff;border-top:1px solid #eee;margin-top:20px}
+.site-footer a{color:#0066cc;text-decoration:none}
+.footer-icons{display:flex;gap:10px;margin-left:auto}
+.social-link{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:999px;background:transparent;color:#111}
+.cat-header-bg{position:relative;height:160px;background-size:cover;background-position:center;background-color:#ccc}
+.cat-title-bar{display:flex;align-items:center;justify-content:space-between;padding:10px}
+.back-btn{padding:8px 10px;border:1px solid #ddd;background:#fff;border-radius:8px;text-decoration:none;color:inherit}
+.menu-list{display:grid;gap:10px}
+.menu-card{display:flex;background:#fff;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.menu-img{width:100px;height:100px;border-radius:12px 0 0 12px;background-size:cover;background-position:center;background-color:#ddd}
+.menu-info{padding:10px;display:flex;flex-direction:column;justify-content:center;flex:1}
+.menu-name{font-weight:600}
+.menu-meta{color:var(--muted);font-size:13px;display:flex;gap:8px}
+.menu-price-right{margin-left:auto;padding:0 12px;font-weight:700;display:flex;align-items:center}
+.modal{position:fixed;inset:0;display:none;z-index:50}
+.modal.active{display:block}
+.modal-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.4)}
+.modal-content{position:relative;max-width:420px;margin:80px auto;background:#fff;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+.modal-close{position:absolute;top:8px;right:8px;background:#eee;border:none;border-radius:999px;width:28px;height:28px;cursor:pointer}
+.modal-body{padding:16px;display:grid;gap:12px;justify-items:center}
+.wifi-title{font-weight:600}
+.wifi-pass{font-size:18px;letter-spacing:1px}

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Noa Cafe</title>
+        <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <header class="site-header" style="background:#ffffff">
+        <div class="header-left">
+            <button id="wifiToggle" class="icon-btn" aria-label="WiFi">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12 20c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6.6-6.6c-3.6-3.6-9.6-3.6-13.2 0-.4.4-1 .4-1.4 0s-.4-1 0-1.4c4.4-4.4 11.6-4.4 16 0 .4.4.4 1 0 1.4s-1 .4-1.4 0zm3.5-3.5c-5.6-5.6-14.7-5.6-20.3 0-.4.4-1 .4-1.4 0s-.4-1 0-1.4c6.4-6.4 16.7-6.4 23.1 0 .4.4.4 1 0 1.4s-1 .4-1.4 0z"/></svg>
+            </button>
+        </div>
+        <div class="header-center">
+                        <img class="logo" src="uploads/u_6930851c7b0821.63613472.gif" alt="Noa Cafe">
+                    </div>
+        <div class="header-right">
+            <button id="searchToggle" class="icon-btn" aria-label="Ara">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+            </button>
+        </div>
+    </header>
+    <div id="wifiModal" class="modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <button id="wifiClose" class="modal-close" aria-label="Kapat">×</button>
+            <div class="modal-body">
+                <div class="modal-logo">
+                                            <img class="logo" src="uploads/u_6930851c7b0821.63613472.gif" alt="Noa Cafe">
+                                    </div>
+                <div class="wifi-info">
+                    <div class="wifi-title">WiFi Şifresi</div>
+                    <div class="wifi-pass">noamoa</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="searchBar" class="search-bar">
+        <input type="text" id="searchInput" placeholder="Ara">
+        <div id="searchResults" class="search-results"></div>
+    </div>
+
+    <main class="container">
+        <section class="favorites">
+            <h2>Favori Menüler</h2>
+            <div class="fav-list">
+                                                            <a class="fav-card" href="category.php?id=c6930827426d61#item-m693085a6ef457">
+                            <div class="fav-img" style="background-image:url(uploads/u_693085a6ef2e39.64045366.png)"></div>
+                            <div class="fav-info">
+                                <div class="fav-name">Çilekli Smootie</div>
+                                <div class="fav-price">800 ₺</div>
+                            </div>
+                        </a>
+                                                                                <a class="fav-card" href="category.php?id=c6930827426d61#item-m693086096edc9">
+                            <div class="fav-img" style="background-image:url(uploads/u_693086096ec1d6.88232952.png)"></div>
+                            <div class="fav-info">
+                                <div class="fav-name">Muzlu Smootie</div>
+                                <div class="fav-price">750 ₺</div>
+                            </div>
+                        </a>
+                                                </div>
+        </section>
+
+        <section class="categories">
+            <div class="cat-header">
+                <h2>Kategoriler</h2>
+            </div>
+            <div class="cat-grid">
+                                                                            <a class="cat-card vertical" href="category.php?id=c6930826586589" style="background-image:url(uploads/u_6930853ba056f6.18886522.png)">
+                        <div class="cat-title">KAHVELER</div>
+                    </a>
+                                                                            <a class="cat-card vertical" href="category.php?id=c6930827426d61" style="background-image:url(uploads/u_693085823ba134.05189484.png)">
+                        <div class="cat-title">SMOOTİE</div>
+                    </a>
+                                                                            <a class="cat-card two" href="category.php?id=c6930827845a58" style="">
+                        <div class="cat-title">FROZEN</div>
+                    </a>
+                                                                            <a class="cat-card two" href="category.php?id=c6930827dc6dd2" style="">
+                        <div class="cat-title">LİMONATA</div>
+                    </a>
+                                                                            <a class="cat-card two" href="category.php?id=c693082835229f" style="">
+                        <div class="cat-title">NOA SARMA</div>
+                    </a>
+                                                                            <a class="cat-card two" href="category.php?id=c69308288ab489" style="">
+                        <div class="cat-title">DONDURMA</div>
+                    </a>
+                                                                            <a class="cat-card two" href="category.php?id=c6930828f3712f" style="">
+                        <div class="cat-title">KRUVASAN</div>
+                    </a>
+                                                                            <a class="cat-card two" href="category.php?id=c693082a05d328" style="">
+                        <div class="cat-title">TATLILAR</div>
+                    </a>
+                                                                            <a class="cat-card two" href="category.php?id=c693082a8d8dc0" style="">
+                        <div class="cat-title">SOĞUK KAHVELER</div>
+                    </a>
+                                                                            <a class="cat-card two" href="category.php?id=c693082aeb380c" style="">
+                        <div class="cat-title">SICAK İÇECEKLER</div>
+                    </a>
+                                                                            <a class="cat-card two" href="category.php?id=c693082b4b2d2d" style="">
+                        <div class="cat-title">WAFFLE</div>
+                    </a>
+                            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer" style="background:#ffffff">
+        <div class="footer-left"></div>
+        <div class="footer-center">Noa Cafe</div>
+        <div class="footer-right footer-icons">
+                                    <a class="social-link" href="instagram.com/noacafe" target="_blank" aria-label="Instagram">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm5 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm6-1.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/></svg>
+            </a>
+                                    <a class="social-link" href="adsadsadsadsa" target="_blank" aria-label="X">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M3 3l7 7-7 7h3l5-5 5 5h3l-7-7 7-7h-3l-5 5-5-5H3z"/></svg>
+            </a>
+                    </div>
+    </footer>
+
+    <script>window.__SEARCH__ = { categories: [{"id":"c6930826586589","name":"KAHVELER"},{"id":"c6930827426d61","name":"SMOOTİE"},{"id":"c6930827845a58","name":"FROZEN"},{"id":"c6930827dc6dd2","name":"LİMONATA"},{"id":"c693082835229f","name":"NOA SARMA"},{"id":"c69308288ab489","name":"DONDURMA"},{"id":"c6930828f3712f","name":"KRUVASAN"},{"id":"c693082a05d328","name":"TATLILAR"},{"id":"c693082a8d8dc0","name":"SOĞUK KAHVELER"},{"id":"c693082aeb380c","name":"SICAK İÇECEKLER"},{"id":"c693082b4b2d2d","name":"WAFFLE"}], menu: [{"id":"m693085a6ef457","name":"Çilekli Smootie","category_id":"c6930827426d61"},{"id":"m693086096edc9","name":"Muzlu Smootie","category_id":"c6930827426d61"}] };</script>
+    <script src="assets/js/app.js"></script>
+</body>
+</html>

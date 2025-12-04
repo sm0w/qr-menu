@@ -1,0 +1,18 @@
+[
+    {
+        "id": "m693085a6ef457",
+        "name": "Çilekli Smootie",
+        "price": "800",
+        "image": "uploads\/u_693085a6ef2e39.64045366.png",
+        "category_id": "c6930827426d61",
+        "favorite": true
+    },
+    {
+        "id": "m693086096edc9",
+        "name": "Muzlu Smootie",
+        "price": "750",
+        "image": "uploads\/u_693086096ec1d6.88232952.png",
+        "category_id": "c6930827426d61",
+        "favorite": true
+    }
+]
