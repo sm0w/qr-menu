@@ -1,13 +1,13 @@
 {
-    "site_title": "Noa Cafe",
+    "site_title": "Tester Cafe",
     "logo": "uploads\/u_6930851c7b0821.63613472.gif",
     "favicon": "",
     "social": {
         "facebook": "",
-        "instagram": "instagram.com\/noacafe",
+        "instagram": "instagram.com\/tester",
         "twitter": "adsadsadsadsa"
     },
-    "admin_password_hash": "$2y$10$0cJZJtwftM2JRg3n5OErnO7FJzBqknPM.gXM2x2szk3.qGv7nT4Y2",
+    "admin_password_hash": "$2y$10$ye8ugthW.99tyF95l1O4neUnNCxR55Ir0ctLN\/qpyM3JxWiglU5Au",
     "wifi_password": "noamoa",
     "header_bg": "#ffffff",
     "footer_bg": "#ffffff"
