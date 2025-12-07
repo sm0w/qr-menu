@@ -114,6 +114,25 @@ function fmt_price($p): string {
             </div>
         </div>
     </div>
+    <div id="variantsModal" class="modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <button id="varClose" class="modal-close" aria-label="Kapat">×</button>
+            <div class="modal-body">
+                <div class="modal-logo">
+                    <?php if ($logo): ?>
+                        <img class="logo" src="<?php echo h($logo); ?>" alt="<?php echo h($title); ?>">
+                    <?php else: ?>
+                        <div class="logo-text"><?php echo h($title); ?></div>
+                    <?php endif; ?>
+                </div>
+                <div class="wifi-info">
+                    <div class="wifi-title" id="varTitle">Çeşitler</div>
+                    <ul class="var-list" id="varList"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
     <div id="searchBar" class="search-bar">
         <input type="text" id="searchInput" placeholder="Ara">
         <div id="searchResults" class="search-results"></div>
@@ -128,7 +147,14 @@ function fmt_price($p): string {
                         <a class="fav-card" href="category.php?id=<?php echo h((string)($item['category_id'] ?? '')); ?>#item-<?php echo h((string)($item['id'] ?? '')); ?>">
                             <div class="fav-img" style="<?php echo !empty($item['image'])? 'background-image:url('.h($item['image']).')':''; ?>"></div>
                             <div class="fav-info">
-                                <div class="fav-name"><?php echo h((string)($item['name'] ?? '')); ?></div>
+                                <div class="fav-name">
+                                    <?php echo h((string)($item['name'] ?? '')); ?>
+                                    <?php $vars = isset($item['variants']) && is_array($item['variants']) ? $item['variants'] : []; if (count($vars) > 0): $vdata = array_map(function($v){ return ['name'=>(string)($v['name']??''),'price'=>fmt_price($v['price']??'')]; }, $vars); $vjson = json_encode($vdata, JSON_UNESCAPED_UNICODE); $venc = rawurlencode((string)$vjson); ?>
+                                    <button class="fav-var-btn" type="button" aria-label="Çeşitler" data-name="<?php echo h((string)($item['name'] ?? '')); ?>" data-variants="<?php echo h($venc); ?>">
+                                        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2l3 7h7l-6 4 3 7-6-4-6 4 3-7-6-4h7z"/></svg>
+                                    </button>
+                                    <?php endif; ?>
+                                </div>
                                 <div class="fav-price"><?php echo h(fmt_price($item['price'] ?? '')); ?></div>
                             </div>
                         </a>
