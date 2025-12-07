@@ -2,78 +2,50 @@
     {
         "id": "c6930826586589",
         "name": "KAHVELER",
-        "image": "uploads\/u_6930853ba056f6.18886522.png",
+        "image": "uploads\/u_6935ddc66afb91.62648779.gif",
         "visible": true,
-        "layout": "vertical"
+        "layout": "full"
     },
     {
         "id": "c6930827426d61",
         "name": "SMOOTİE",
-        "image": "uploads\/u_693085823ba134.05189484.png",
+        "image": "uploads\/u_6935dd3a926202.61861656.gif",
         "visible": true,
         "layout": "vertical"
     },
     {
         "id": "c6930827845a58",
         "name": "FROZEN",
-        "image": "",
+        "image": "uploads\/u_6935dde0809486.32163683.png",
         "visible": true,
-        "layout": "two"
+        "layout": "vertical"
     },
     {
         "id": "c6930827dc6dd2",
         "name": "LİMONATA",
-        "image": "",
-        "visible": true,
-        "layout": "two"
-    },
-    {
-        "id": "c693082835229f",
-        "name": "NOA SARMA",
-        "image": "",
+        "image": "uploads\/u_6935deb21e02d4.24380766.jpg",
         "visible": true,
         "layout": "two"
     },
     {
         "id": "c69308288ab489",
         "name": "DONDURMA",
-        "image": "",
+        "image": "uploads\/u_6935e0162f54b0.97377607.jpg",
         "visible": true,
         "layout": "two"
     },
     {
         "id": "c6930828f3712f",
         "name": "KRUVASAN",
-        "image": "",
+        "image": "uploads\/u_6935e055457139.88458859.jpg",
         "visible": true,
-        "layout": "two"
+        "layout": "full"
     },
     {
         "id": "c693082a05d328",
         "name": "TATLILAR",
-        "image": "",
+        "image": "uploads\/u_6935e0893081b5.17958516.jpg",
         "visible": true,
-        "layout": "two"
-    },
-    {
-        "id": "c693082a8d8dc0",
-        "name": "SOĞUK KAHVELER",
-        "image": "",
-        "visible": true,
-        "layout": "two"
-    },
-    {
-        "id": "c693082aeb380c",
-        "name": "SICAK İÇECEKLER",
-        "image": "",
-        "visible": true,
-        "layout": "two"
-    },
-    {
-        "id": "c693082b4b2d2d",
-        "name": "WAFFLE",
-        "image": "",
-        "visible": true,
-        "layout": "two"
+        "layout": "full"
     }
 ]
