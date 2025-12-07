@@ -5,7 +5,42 @@
         "price": "800",
         "image": "uploads\/u_693085a6ef2e39.64045366.png",
         "category_id": "c6930827426d61",
-        "favorite": true
+        "favorite": true,
+        "desc": "Test açıklama",
+        "variants": [
+            {
+                "name": "Ananaslı",
+                "price": "700"
+            },
+            {
+                "name": "Karpuzlu",
+                "price": "800"
+            },
+            {
+                "name": "Naneli",
+                "price": "400"
+            },
+            {
+                "name": "Erikli",
+                "price": "800"
+            },
+            {
+                "name": "Sucuklu",
+                "price": "700"
+            },
+            {
+                "name": "Biberli",
+                "price": "750"
+            },
+            {
+                "name": "Tavuklu",
+                "price": "500"
+            },
+            {
+                "name": "Kedili",
+                "price": "600"
+            }
+        ]
     },
     {
         "id": "m693086096edc9",
@@ -13,6 +48,7 @@
         "price": "750",
         "image": "uploads\/u_693086096ec1d6.88232952.png",
         "category_id": "c6930827426d61",
-        "favorite": true
+        "favorite": true,
+        "desc": ""
     }
 ]
