@@ -35,6 +35,10 @@ function fmt_price($p): string {
     $s = preg_replace('/\s*(₺|tl)\s*/iu', '', $s);
     return trim($s) . ' ₺';
 }
+function str_limit(string $s, int $l): string {
+    if (function_exists('mb_substr')) return mb_substr($s, 0, $l, 'UTF-8');
+    return substr($s, 0, $l);
+}
 
 $configFile = $dataDir . DIRECTORY_SEPARATOR . 'config.json';
 $catsFile = $dataDir . DIRECTORY_SEPARATOR . 'categories.json';
@@ -114,6 +118,12 @@ if (empty($_SESSION['admin'])) {
     exit;
 }
 
+$tab = isset($_GET['tab']) ? (string)$_GET['tab'] : 'dashboard';
+$tab = in_array($tab, ['dashboard','kategoriler','menuler','ayarlar'], true) ? $tab : 'dashboard';
+$catCount = count($categories);
+$itemCount = count($menu);
+$favCount = 0; foreach ($menu as $it) { if (!empty($it['favorite'])) $favCount++; }
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
     if ($action === 'save_settings') {
@@ -131,14 +141,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($hb !== '') $config['header_bg'] = $hb;
         if ($fb !== '') $config['footer_bg'] = $fb;
         save_json($configFile, $config);
-        header('Location: admin.php'); exit;
+        $ret = (string)($_POST['ret'] ?? '');
+        $anchor = (string)($_POST['anchor'] ?? '');
+        $loc = 'admin.php' . ($ret? ('?tab=' . urlencode($ret)) : '') . ($anchor? ('#' . rawurlencode($anchor)) : '');
+        header('Location: ' . $loc); exit;
+        header('Location: ' . $loc); exit;
     }
     if ($action === 'clear_cache') {
         $cacheDir = $baseDir . DIRECTORY_SEPARATOR . 'cache';
         if (is_dir($cacheDir)) {
             foreach (glob($cacheDir . DIRECTORY_SEPARATOR . '*') ?: [] as $f) { if (is_file($f)) @unlink($f); }
         }
-        header('Location: admin.php'); exit;
+        $ret = (string)($_POST['ret'] ?? '');
+        $anchor = (string)($_POST['anchor'] ?? '');
+        $loc = 'admin.php' . ($ret? ('?tab=' . urlencode($ret)) : '') . ($anchor? ('#' . rawurlencode($anchor)) : '');
+        header('Location: ' . $loc); exit;
+    }
+    if ($action === 'change_admin_password') {
+        $current = trim((string)($_POST['current'] ?? ''));
+        $pwd = trim((string)($_POST['password'] ?? ''));
+        $confirm = trim((string)($_POST['confirm'] ?? ''));
+        $hash = (string)($config['admin_password_hash'] ?? '');
+        $ok = false; $msg = '';
+        if ($pwd === '' || $confirm === '') {
+            $msg = 'Yeni şifre alanları boş olamaz';
+        } elseif ($pwd !== $confirm) {
+            $msg = 'Yeni şifre ile tekrarı eşleşmiyor';
+        } elseif ($hash === '' || password_verify($current, $hash)) {
+            $config['admin_password_hash'] = password_hash($pwd, PASSWORD_DEFAULT);
+            save_json($configFile, $config);
+            $ok = true; $msg = 'Şifre güncellendi';
+        } else {
+            $msg = 'Mevcut şifre doğru değil';
+        }
+        $_SESSION['flash'] = ['type' => $ok? 'success':'error', 'msg' => $msg];
+        $ret = (string)($_POST['ret'] ?? ''); $loc = 'admin.php' . ($ret? ('?tab=' . urlencode($ret)) : '');
+        header('Location: ' . $loc); exit;
     }
     if ($action === 'add_category') {
         $name = trim((string)($_POST['cat_name'] ?? ''));
@@ -149,7 +187,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $categories[] = ['id' => $id, 'name' => $name, 'image' => $image ?? '', 'visible' => true, 'layout' => $layout];
             save_json($catsFile, $categories);
         }
-        header('Location: admin.php'); exit;
+        $ret = (string)($_POST['ret'] ?? '');
+        $anchor = (string)($_POST['anchor'] ?? '');
+        $loc = 'admin.php' . ($ret? ('?tab=' . urlencode($ret)) : '') . ($anchor? ('#' . rawurlencode($anchor)) : '');
+        header('Location: ' . $loc); exit;
     }
     if ($action === 'toggle_category') {
         $id = (string)($_POST['id'] ?? '');
@@ -158,7 +199,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         unset($cat);
         save_json($catsFile, $categories);
-        header('Location: admin.php'); exit;
+        $ret = (string)($_POST['ret'] ?? '');
+        $anchor = (string)($_POST['anchor'] ?? '');
+        $loc = 'admin.php' . ($ret? ('?tab=' . urlencode($ret)) : '') . ($anchor? ('#' . rawurlencode($anchor)) : '');
+        header('Location: ' . $loc); exit;
     }
     if ($action === 'set_category_layout') {
         $id = (string)($_POST['id'] ?? '');
@@ -168,7 +212,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         unset($cat);
         save_json($catsFile, $categories);
-        header('Location: admin.php'); exit;
+        $ret = (string)($_POST['ret'] ?? '');
+        $anchor = (string)($_POST['anchor'] ?? '');
+        $loc = 'admin.php' . ($ret? ('?tab=' . urlencode($ret)) : '') . ($anchor? ('#' . rawurlencode($anchor)) : '');
+        header('Location: ' . $loc); exit;
     }
     if ($action === 'edit_category') {
         $id = (string)($_POST['id'] ?? '');
@@ -187,7 +234,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         unset($cat);
         save_json($catsFile, $categories);
-        header('Location: admin.php'); exit;
+        $ret = (string)($_POST['ret'] ?? '');
+        $anchor = (string)($_POST['anchor'] ?? '');
+        $loc = 'admin.php' . ($ret? ('?tab=' . urlencode($ret)) : '') . ($anchor? ('#' . rawurlencode($anchor)) : '');
+        header('Location: ' . $loc); exit;
     }
     if ($action === 'delete_category') {
         $id = (string)($_POST['id'] ?? '');
@@ -195,19 +245,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $menu = array_values(array_filter($menu, function($m) use ($id){ return (string)($m['category_id'] ?? '') !== $id; }));
         save_json($catsFile, $categories);
         save_json($menuFile, $menu);
-        header('Location: admin.php'); exit;
+        $ret = (string)($_POST['ret'] ?? '');
+        $anchor = (string)($_POST['anchor'] ?? '');
+        $loc = 'admin.php' . ($ret? ('?tab=' . urlencode($ret)) : '') . ($anchor? ('#' . rawurlencode($anchor)) : '');
+        header('Location: ' . $loc); exit;
     }
     if ($action === 'add_item') {
         $name = trim((string)($_POST['item_name'] ?? ''));
         $price = trim((string)($_POST['item_price'] ?? ''));
         $cid = (string)($_POST['item_category'] ?? '');
+        $desc = str_limit(trim((string)($_POST['item_desc'] ?? '')), 80);
+        $vn = isset($_POST['item_var_name']) && is_array($_POST['item_var_name']) ? $_POST['item_var_name'] : [];
+        $vp = isset($_POST['item_var_price']) && is_array($_POST['item_var_price']) ? $_POST['item_var_price'] : [];
+        $variants = [];
+        $maxc = max(count($vn), count($vp));
+        for ($i=0; $i<$maxc; $i++) {
+            $n = trim((string)($vn[$i] ?? ''));
+            $p = trim((string)($vp[$i] ?? ''));
+            if ($n !== '') { $variants[] = ['name' => $n, 'price' => $p]; }
+        }
         $img = upload_file('item_image', $uploadsDir);
         if ($name !== '' && $cid !== '') {
             $id = uniqid('m');
-            $menu[] = ['id' => $id, 'name' => $name, 'price' => $price, 'image' => $img ?? '', 'category_id' => $cid, 'favorite' => !empty($_POST['item_favorite'])];
+            $menu[] = ['id' => $id, 'name' => $name, 'price' => $price, 'image' => $img ?? '', 'category_id' => $cid, 'favorite' => !empty($_POST['item_favorite']), 'desc' => $desc, 'variants' => $variants];
             save_json($menuFile, $menu);
         }
-        header('Location: admin.php'); exit;
+        $ret = (string)($_POST['ret'] ?? '');
+        $anchor = (string)($_POST['anchor'] ?? '');
+        $loc = 'admin.php' . ($ret? ('?tab=' . urlencode($ret)) : '') . ($anchor? ('#' . rawurlencode($anchor)) : '');
+        header('Location: ' . $loc); exit;
     }
     if ($action === 'edit_item') {
         $id = (string)($_POST['id'] ?? '');
@@ -217,24 +283,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $price = trim((string)($_POST['item_price'] ?? (string)$it['price']));
                 $cid = (string)($_POST['item_category'] ?? (string)$it['category_id']);
                 $fav = !empty($_POST['item_favorite']);
+                $desc = str_limit(trim((string)($_POST['item_desc'] ?? (string)($it['desc'] ?? ''))), 80);
+                $vn = isset($_POST['edit_var_name']) && is_array($_POST['edit_var_name']) ? $_POST['edit_var_name'] : [];
+                $vp = isset($_POST['edit_var_price']) && is_array($_POST['edit_var_price']) ? $_POST['edit_var_price'] : [];
+                $variants = [];
+                $maxc = max(count($vn), count($vp));
+                for ($i=0; $i<$maxc; $i++) {
+                    $n = trim((string)($vn[$i] ?? ''));
+                    $p = trim((string)($vp[$i] ?? ''));
+                    if ($n !== '') { $variants[] = ['name' => $n, 'price' => $p]; }
+                }
                 $img = upload_file('edit_item_image', $uploadsDir);
                 $it['name'] = $name;
                 $it['price'] = $price;
                 $it['category_id'] = $cid;
                 $it['favorite'] = $fav;
+                $it['desc'] = $desc;
+                $it['variants'] = $variants;
                 if ($img) { $it['image'] = $img; }
                 break;
             }
         }
         unset($it);
         save_json($menuFile, $menu);
-        header('Location: admin.php'); exit;
+        $ret = (string)($_POST['ret'] ?? '');
+        $anchor = (string)($_POST['anchor'] ?? '');
+        $loc = 'admin.php' . ($ret? ('?tab=' . urlencode($ret)) : '') . ($anchor? ('#' . rawurlencode($anchor)) : '');
+        header('Location: ' . $loc); exit;
     }
     if ($action === 'delete_item') {
         $id = (string)($_POST['id'] ?? '');
         $menu = array_values(array_filter($menu, function($m) use ($id){ return (string)($m['id'] ?? '') !== $id; }));
         save_json($menuFile, $menu);
-        header('Location: admin.php'); exit;
+        $ret = (string)($_POST['ret'] ?? '');
+        $anchor = (string)($_POST['anchor'] ?? '');
+        $loc = 'admin.php' . ($ret? ('?tab=' . urlencode($ret)) : '') . ($anchor? ('#' . rawurlencode($anchor)) : '');
+        header('Location: ' . $loc); exit;
     }
 }
 
@@ -248,8 +332,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <style>
         .admin-wrap { max-width: 900px; margin: 0 auto; padding: 16px; }
         .admin-card { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 10px rgba(0,0,0,.06); }
+        .admin-header { position: sticky; top: 0; z-index: 10; background: #fff; border-bottom: 1px solid #eee; }
+        .admin-nav { display: flex; align-items: center; justify-content: space-between; max-width: 900px; margin: 0 auto; padding: 10px 16px; }
+        .admin-left { display:flex; align-items:center; gap:8px; }
+        .admin-tabs { display:flex; gap:10px; }
+        .admin-tabs a { padding:8px 12px; border-radius:8px; text-decoration:none; color:#111; border:1px solid #eee; }
+        .admin-tabs a.active { background:#111; color:#fff; border-color:#111; }
+        .admin-actions { display:flex; align-items:center; gap:8px; }
+        .icon-btn { display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:8px; border:1px solid #eee; background:#fff; color:#111; text-decoration:none; }
+        .menu-toggle { display:none; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .admin-list { display: grid; gap: 8px; }
+
         .row { display:flex; align-items:center; gap:8px; }
         .admin-table { width:100%; border-collapse: collapse; }
         .admin-table th, .admin-table td { border-bottom: 1px solid #eee; padding: 8px; text-align: left; }
@@ -257,8 +351,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         input[type=file] { width: 100%; }
         .btn { padding: 10px 14px; border-radius: 8px; border: none; background:#111; color:#fff; }
         .thumb { width: 56px; height: 56px; border-radius: 8px; object-fit: cover; background: #eee; display: inline-block; }
+        .highlight-row td { background: #fff3cd !important; }
+        .highlight-box { background: #fffbe6 !important; box-shadow: 0 0 0 2px #ffe08a inset; }
         
         @media (max-width: 640px) {
+            .admin-left { flex-direction: row; align-items: center; }
             .grid-2 { grid-template-columns: 1fr; }
             .row { flex-direction: column; align-items: stretch; }
             .admin-wrap { padding: 12px; }
@@ -269,19 +366,68 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             .admin-table form { grid-template-columns: 1fr !important; }
             .btn { width: 100%; }
             .table-responsive { overflow-x: auto; }
+            .menu-toggle { display:inline-flex; }
+            .admin-tabs { display:none; gap:8px; margin-top:0; flex-wrap: wrap; }
+            body.admin-nav-open .admin-tabs { display:flex; }
+            .admin-actions { justify-content: flex-end; }
         }
     </style>
 </head>
 <body>
+    <header class="admin-header">
+        <div class="admin-nav">
+            <div class="admin-left">
+                <a class="icon-btn menu-toggle" href="#" id="adminMenuToggle" title="Menüyü Aç/Kapat" aria-label="Menüyü Aç/Kapat">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/></svg>
+                </a>
+                <div class="admin-tabs">
+                    <a href="admin.php?tab=dashboard" class="<?php echo $tab==='dashboard'? 'active':''; ?>">Dashboard</a>
+                    <a href="admin.php?tab=kategoriler" class="<?php echo $tab==='kategoriler'? 'active':''; ?>">Kategoriler</a>
+                    <a href="admin.php?tab=menuler" class="<?php echo $tab==='menuler'? 'active':''; ?>">Menü Öğeleri</a>
+                    <a href="admin.php?tab=ayarlar" class="<?php echo $tab==='ayarlar'? 'active':''; ?>">Ayarlar</a>
+                </div>
+            <div class="admin-actions">
+                <a class="icon-btn" href="index.php" title="Siteye Dön" aria-label="Siteye Dön">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M3 11l9-8 9 8v10a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-4H9v4a2 2 0 0 1-2 2H3V11z"/></svg>
+                </a>
+                <form method="post">
+                    <input type="hidden" name="action" value="logout">
+                    <button class="btn" type="submit">Çıkış</button>
+                </form>
+            </div>
+        </div>
+    </header>
     <div class="admin-wrap">
-        <form method="post" style="text-align:right;margin-bottom:8px;">
-            <input type="hidden" name="action" value="logout">
-            <button class="btn" type="submit">Çıkış</button>
-        </form>
+        <?php if ($tab==='dashboard'): ?>
+        <div class="admin-card">
+            <h2>Dashboard</h2>
+            <div class="grid-2">
+                <div class="admin-card" style="margin:0;">
+                    <h3>Kategori Sayısı</h3>
+                    <div><?php echo (int)$catCount; ?></div>
+                </div>
+                <div class="admin-card" style="margin:0;">
+                    <h3>Menü Öğesi</h3>
+                    <div><?php echo (int)$itemCount; ?></div>
+                </div>
+                <div class="admin-card" style="margin:0;">
+                    <h3>Favoriler</h3>
+                    <div><?php echo (int)$favCount; ?></div>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+        <?php if ($tab==='ayarlar'): ?>
+        <?php if (!empty($_SESSION['flash']) && $tab==='ayarlar'): $f=$_SESSION['flash']; unset($_SESSION['flash']); ?>
+        <div class="admin-card" style="border-left:4px solid <?php echo ($f['type']==='success')? '#2d8a34':'#c00'; ?>;">
+            <strong><?php echo h((string)$f['msg']); ?></strong>
+        </div>
+        <?php endif; ?>
         <div class="admin-card">
             <h2>Önbellek</h2>
             <form method="post" class="row">
                 <input type="hidden" name="action" value="clear_cache">
+                <input type="hidden" name="ret" value="ayarlar">
                 <button class="btn" type="submit">Önbelleği Temizle</button>
             </form>
         </div>
@@ -289,6 +435,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <h2>Site Ayarları</h2>
             <form method="post" enctype="multipart/form-data">
                 <input type="hidden" name="action" value="save_settings">
+                <input type="hidden" name="ret" value="ayarlar">
                 <div class="grid-2">
                     <div>
                         <label>Site Başlığı</label>
@@ -332,13 +479,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div style="margin-top:12px;"><button class="btn" type="submit">Kaydet</button></div>
             </form>
         </div>
+        <div class="admin-card">
+            <h2>Admin Şifresi</h2>
+            <form method="post" class="row">
+                <input type="hidden" name="action" value="change_admin_password">
+                <input type="hidden" name="ret" value="ayarlar">
+                <input type="password" name="current" placeholder="Mevcut şifre">
+                <input type="password" name="password" placeholder="Yeni şifre">
+                <input type="password" name="confirm" placeholder="Şifre tekrarı">
+                <button class="btn" type="submit">Güncelle</button>
+            </form>
+        </div>
+        <?php endif; ?>
 
         
 
-        <div class="admin-card">
+        <?php if ($tab==='kategoriler'): ?>
+        <div class="admin-card" id="kategoriler">
             <h2>Kategoriler</h2>
             <form method="post" enctype="multipart/form-data" class="row">
                 <input type="hidden" name="action" value="add_category">
+                <input type="hidden" name="ret" value="kategoriler">
+                <input type="hidden" name="anchor" value="kategoriler">
                 <input type="text" name="cat_name" placeholder="Kategori adı">
                 <input type="file" name="cat_image" accept="image/*">
                 <select name="cat_layout">
@@ -353,7 +515,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <thead><tr><th>Görsel</th><th>Ad</th><th>Görünür</th><th>Görünüm</th><th>İşlem</th></tr></thead>
                 <tbody>
                     <?php foreach ($categories as $cat): ?>
-                        <tr>
+                        <tr id="cat-<?php echo h((string)$cat['id']); ?>">
                             <td>
                                 <?php if (!empty($cat['image'])): ?>
                                     <img class="thumb" src="<?php echo h((string)$cat['image']); ?>" alt="">
@@ -368,6 +530,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <form method="post" enctype="multipart/form-data" style="display:grid;grid-template-columns:1fr 1fr;gap:6px;align-items:center;">
                                     <input type="hidden" name="action" value="edit_category">
                                     <input type="hidden" name="id" value="<?php echo h((string)$cat['id']); ?>">
+                                    <input type="hidden" name="ret" value="kategoriler">
+                                    <input type="hidden" name="anchor" value="cat-<?php echo h((string)$cat['id']); ?>">
                                     <input type="text" name="cat_name" value="<?php echo h((string)$cat['name']); ?>" placeholder="Ad">
                                     <select name="cat_layout">
                                         <option value="two" <?php echo (($cat['layout'] ?? 'two')==='two')? 'selected':''; ?>>Yan Yana</option>
@@ -379,22 +543,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <button class="btn" type="submit">Güncelle</button>
                                 </form>
                                 <form method="post" style="display:inline;margin-top:6px;">
-                                    <input type="hidden" name="action" value="delete_category">
-                                    <input type="hidden" name="id" value="<?php echo h((string)$cat['id']); ?>">
-                                    <button class="btn" type="submit" onclick="return confirm('Kategori ve bağlı menüler silinecek. Onaylıyor musunuz?');">Sil</button>
-                                </form>
-                            </td>
-                        </tr>
+                                     <input type="hidden" name="action" value="delete_category">
+                                     <input type="hidden" name="id" value="<?php echo h((string)$cat['id']); ?>">
+                                     <input type="hidden" name="ret" value="kategoriler">
+                                     <input type="hidden" name="anchor" value="kategoriler">
+                                     <button class="btn" type="submit" onclick="return confirm('Kategori ve bağlı menüler silinecek. Onaylıyor musunuz?');">Sil</button>
+                                 </form>
+                             </td>
+                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
             </div>
         </div>
+        <?php endif; ?>
 
-        <div class="admin-card">
+        <?php if ($tab==='menuler'): ?>
+        <div class="admin-card" id="menuler">
             <h2>Menü Öğeleri</h2>
             <form method="post" enctype="multipart/form-data" class="admin-list">
                 <input type="hidden" name="action" value="add_item">
+                <input type="hidden" name="ret" value="menuler">
+                <input type="hidden" name="anchor" value="menuler">
                 <div class="grid-2">
                     <div><input type="text" name="item_name" placeholder="Ad"></div>
                     <div><input type="text" name="item_price" placeholder="Fiyat"></div>
@@ -404,10 +574,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <?php foreach ($categories as $cat): ?>
                                 <option value="<?php echo h((string)$cat['id']); ?>"><?php echo h((string)$cat['name']); ?></option>
                             <?php endforeach; ?>
+
                         </select>
                     </div>
                 </div>
                 <div class="row">
+                    <input type="text" name="item_desc" placeholder="Açıklama" maxlength="80">
                     <input type="file" name="item_image" accept="image/*">
                     <label style="display:flex;align-items:center;gap:6px;"><input type="checkbox" name="item_favorite" value="1"> Favori</label>
                     <button class="btn" type="submit">Ekle</button>
@@ -418,7 +590,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <thead><tr><th>Görsel</th><th>Ad</th><th>Fiyat</th><th>Kategori</th><th>Favori</th><th>İşlem</th></tr></thead>
                 <tbody>
                     <?php foreach ($menu as $it): ?>
-                        <tr>
+                        <tr id="item-<?php echo h((string)$it['id']); ?>">
                             <td>
                                 <?php if (!empty($it['image'])): ?>
                                     <img class="thumb" src="<?php echo h((string)$it['image']); ?>" alt="">
@@ -440,8 +612,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <form method="post" enctype="multipart/form-data" style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;align-items:center;">
                                     <input type="hidden" name="action" value="edit_item">
                                     <input type="hidden" name="id" value="<?php echo h((string)$it['id']); ?>">
+                                    <input type="hidden" name="ret" value="menuler">
+                                    <input type="hidden" name="anchor" value="item-<?php echo h((string)$it['id']); ?>">
                                     <input type="text" name="item_name" value="<?php echo h((string)$it['name']); ?>" placeholder="Ad">
                                     <input type="text" name="item_price" value="<?php echo h((string)$it['price']); ?>" placeholder="Fiyat">
+                                    <input type="text" name="item_desc" value="<?php echo h((string)($it['desc'] ?? '')); ?>" placeholder="Açıklama" maxlength="80" style="grid-column:1/-1;">
+                                    <div style="grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+                                        <?php $vars = isset($it['variants']) && is_array($it['variants']) ? $it['variants'] : []; foreach ($vars as $v): ?>
+                                            <input type="text" name="edit_var_name[]" value="<?php echo h((string)($v['name'] ?? '')); ?>" placeholder="Çeşit adı">
+                                            <input type="text" name="edit_var_price[]" value="<?php echo h((string)($v['price'] ?? '')); ?>" placeholder="Çeşit fiyatı">
+                                        <?php endforeach; ?>
+                                        <input type="text" name="edit_var_name[]" value="" placeholder="Çeşit adı">
+                                        <input type="text" name="edit_var_price[]" value="" placeholder="Çeşit fiyatı">
+                                    </div>
                                     <select name="item_category">
                                         <?php foreach ($categories as $cat): ?>
                                             <option value="<?php echo h((string)$cat['id']); ?>" <?php echo ((string)$cat['id'] === (string)$it['category_id'])? 'selected':''; ?>><?php echo h((string)$cat['name']); ?></option>
@@ -454,6 +637,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <form method="post" style="display:inline;margin-top:6px;">
                                     <input type="hidden" name="action" value="delete_item">
                                     <input type="hidden" name="id" value="<?php echo h((string)$it['id']); ?>">
+                                    <input type="hidden" name="ret" value="menuler">
+                                    <input type="hidden" name="anchor" value="menuler">
                                     <button class="btn" type="submit" onclick="return confirm('Menü öğesi silinecek, onaylıyor musunuz?');">Sil</button>
                                 </form>
                             </td>
@@ -463,8 +648,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </table>
             </div>
         </div>
+        <?php endif; ?>
 
         
     </div>
+    <script>
+    (function(){
+        var t = document.getElementById('adminMenuToggle');
+        if (t) { t.addEventListener('click', function(e){ e.preventDefault(); document.body.classList.toggle('admin-nav-open'); }); }
+        var h = location.hash ? location.hash.substring(1) : '';
+        if (h) {
+            var el = document.getElementById(h);
+            if (el) {
+                if (el.tagName && el.tagName.toLowerCase() === 'tr') {
+                    el.classList.add('highlight-row');
+                    setTimeout(function(){ el.classList.remove('highlight-row'); }, 1800);
+                } else {
+                    el.classList.add('highlight-box');
+                    setTimeout(function(){ el.classList.remove('highlight-box'); }, 1800);
+                }
+            }
+        }
+    })();
+    </script>
 </body>
 </html>
