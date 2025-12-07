@@ -92,6 +92,26 @@ $bg = $category['image'] ?? '';
         </div>
     </div>
 
+    <div id="variantsModal" class="modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <button id="varClose" class="modal-close" aria-label="Kapat">×</button>
+            <div class="modal-body">
+                <div class="modal-logo">
+                    <?php if ($logo): ?>
+                        <img class="logo" src="<?php echo h($logo); ?>" alt="<?php echo h((string)$config['site_title']); ?>">
+                    <?php else: ?>
+                        <div class="logo-text"><?php echo h((string)$config['site_title']); ?></div>
+                    <?php endif; ?>
+                </div>
+                <div class="wifi-info">
+                    <div class="wifi-title" id="varTitle">Çeşitler</div>
+                    <ul class="var-list" id="varList"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <main class="container">
         <section class="menu-list">
             <?php foreach ($menu as $item): ?>
@@ -99,7 +119,17 @@ $bg = $category['image'] ?? '';
                 <div class="menu-card" id="item-<?php echo h((string)($item['id'] ?? '')); ?>">
                     <div class="menu-img" style="<?php echo !empty($item['image'])? 'background-image:url('.h($item['image']).')':''; ?>"></div>
                     <div class="menu-info">
-                        <div class="menu-name"><?php echo h((string)($item['name'] ?? '')); ?></div>
+                        <div class="menu-name">
+                            <?php echo h((string)($item['name'] ?? '')); ?>
+                            <?php $vars = isset($item['variants']) && is_array($item['variants']) ? $item['variants'] : []; if (count($vars) > 0): $vdata = array_map(function($v){ return ['name'=>(string)($v['name']??''),'price'=>fmt_price($v['price']??'')]; }, $vars); $vjson = json_encode($vdata, JSON_UNESCAPED_UNICODE); $venc = rawurlencode((string)$vjson); ?>
+                            <button class="fav-var-btn" data-open="variants" type="button" aria-label="Çeşitler" data-name="<?php echo h((string)($item['name'] ?? '')); ?>" data-variants="<?php echo h($venc); ?>" onclick="openVariants('<?php echo h((string)($item['name'] ?? '')); ?>','<?php echo h($venc); ?>')">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2l3 7h7l-6 4 3 7-6-4-6 4 3-7-6-4h7z"/></svg>
+                            </button>
+                            <?php endif; ?>
+                        </div>
+                        <?php if (!empty($item['desc'])): ?>
+                        <div class="menu-meta"><?php echo h((string)$item['desc']); ?></div>
+                        <?php endif; ?>
                     </div>
                     <div class="menu-price-right"><?php echo h(fmt_price($item['price'] ?? '')); ?></div>
                 </div>
@@ -131,5 +161,36 @@ $bg = $category['image'] ?? '';
     </footer>
 
     <script src="assets/js/app.js"></script>
+    <script>
+    if (!window.openVariants) {
+        window.openVariants = function(name, enc){
+            var vm = document.getElementById('variantsModal');
+            var vt = document.getElementById('varTitle');
+            var vl = document.getElementById('varList');
+            var list = [];
+            try { list = JSON.parse(decodeURIComponent(enc || '[]')); } catch(e) {}
+            if (vt) vt.textContent = name || 'Çeşitler';
+            if (vl) {
+                if (Array.isArray(list) && list.length) {
+                    var esc = function(s){ return String(s||'').replace(/[&<>"']/g,function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]; }); };
+                    var head = '<li class="var-head"><span class="var-n">Çeşit</span><span class="var-p">Fiyat</span></li>';
+                    var rows = list.map(function(i){ return '<li class="var-item"><span class="var-n">'+esc(i.name)+'</span><span class="var-p">'+esc(i.price)+'</span></li>'; }).join('');
+                    vl.innerHTML = head + rows;
+                } else {
+                    vl.innerHTML = '<li class="var-empty">Çeşit bulunamadı</li>';
+                }
+            }
+            if (vm) vm.classList.add('active');
+        };
+        (function(){
+            var vm = document.getElementById('variantsModal');
+            var vc = document.getElementById('varClose');
+            if (vc && vm) vc.addEventListener('click', function(){ vm.classList.remove('active'); });
+            var bd = vm ? vm.querySelector('.modal-backdrop') : null;
+            if (bd) bd.addEventListener('click', function(){ vm.classList.remove('active'); });
+            document.addEventListener('keydown', function(e){ if (e.key === 'Escape') { vm && vm.classList.remove('active'); } });
+        })();
+    }
+    </script>
 </body>
 </html>
